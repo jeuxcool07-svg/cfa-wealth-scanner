@@ -38,11 +38,10 @@ class CameraAnalyzer(
         val buf = proxy.planes[0].buffer
         val bytes = ByteArray(buf.remaining())
         buf.get(bytes)
-        val step = 50
         var sum = 0.0
         var sumSq = 0.0
         var n = 0
-        for (i in bytes.indices step step) {
+        for (i in bytes.indices step 50) {
             val v = bytes[i].toInt() and 0xFF
             sum += v
             sumSq += v * v
@@ -53,4 +52,7 @@ class CameraAnalyzer(
         val variance = sumSq / n - mean * mean
         val bright = (mean / 255.0).toFloat()
         val smooth = (1f - (variance / 6000.0).toFloat()).coerceIn(0f, 1f)
-        return (bright * 0.6f + smooth * 0.4f).
+        val result = bright * 0.6f + smooth * 0.4f
+        return result.coerceIn(0f, 1f)
+    }
+}
